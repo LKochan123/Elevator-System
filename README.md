@@ -18,7 +18,7 @@ Dobór windy uwzględniając powyższe założenia działa w następujący spos�
 2. Dopasowujemy windę, która zrealizuje to żądanie najszybciej zgodnie z założeniami.
 3. Jeśli taka winda nie jest dostępna to szukamy windy, która najszybciej będzie dostępna.
 
-Warto dodać, iż punkt nr 3 jest realizowany w sytuacji kiedy winda musi zmienić swój kierunek jazdy. W pierwszej chwili może się to wydawać niepotrzebne, jednak ustaliłem taką strategie ponieważ jest to optymalne rozwiązanie w sytuacji gdy jakieś żądanie pojawi się później i będziemy mogli zrealizować je "po drodze". Założenie z N = 3 zostało przyjęte również po to aby zbyt dużo wind nie stało bezczynnych. Logicznie jest to sensowne ponieważ pozwoliłoby to uniknąć nam przepełniania windy przez ludzi.
+Warto dodać, iż punkt nr 3 jest realizowany w sytuacji kiedy winda musi zmienić swój kierunek jazdy. W pierwszej chwili może się to wydawać niepotrzebne, jednak ustaliłem taką strategie ponieważ jest to optymalne rozwiązanie w sytuacji gdy jakieś żądanie pojawi się później i będziemy mogli zrealizować je "po drodze". Założenie z N = 3 zostało przyjęte również po to aby zbyt dużo wind nie stało bezczynnych. Oprócz rzeczywistego czasu przyjazdu pozwoliłoby to nam uniknąć przepełniania windy przez ludzi. 
 
 ### Jak uruchomić projekt?
 
