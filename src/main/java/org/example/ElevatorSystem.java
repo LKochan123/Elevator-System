@@ -39,6 +39,18 @@ public class ElevatorSystem {
         }
     }
 
+    public void clickFloorButton(int elevatorID, int floor) {
+        Elevator elevator = this.elevators.get(elevatorID);
+
+        if (elevator.containsUpwardRequest(floor) || elevator.containsDownwardRequest(floor)) {
+            System.out.println("Elevator already contains this floor in requests.");
+        } else if (elevator.getTargetFloor() == floor) {
+            System.out.println("Elevator are currently going to this floor.");
+        } else {
+            this.processElevatorAction(elevator, floor);
+        }
+    }
+
     public void step() {
         for (Elevator elevator : this.elevators) {
             Direction direction = elevator.getDirection();
@@ -96,7 +108,7 @@ public class ElevatorSystem {
         Elevator closestElevator = null;
 
         BiFunction<Elevator, Integer, Integer> priorityDistance = this.getIdleAndOnTheWayDistance(requestDirection);
-        BiFunction<Elevator, Integer, Integer> secondaryDistance = this.getLastStopDistance(requestDirection);
+        BiFunction<Elevator, Integer, Integer> secondaryDistance = this.getNotOnTheWayDistance(requestDirection);
         BiFunction<Elevator, Integer, Integer>[] strategies = new BiFunction[]{priorityDistance, secondaryDistance};
 
         if (this.isRequestValid(requestFloor, requestDirection)) {
@@ -179,10 +191,6 @@ public class ElevatorSystem {
     }
 
     private boolean isRequestOnTheWay(Elevator elevator, int floor, Direction requestDirection) {
-        if (elevator.isIdle()) {
-            return false;
-        }
-
         return switch (requestDirection) {
             case UPWARD -> elevator.getDirection() == Direction.UPWARD && elevator.getCurrentFloor() <= floor;
             case DOWNWARD -> elevator.getDirection() == Direction.DOWNWARD && elevator.getCurrentFloor() >= floor;
@@ -190,15 +198,16 @@ public class ElevatorSystem {
         };
     }
 
-    private BiFunction<Elevator, Integer, Integer> getLastStopDistance(Direction requestDirection) {
+    private BiFunction<Elevator, Integer, Integer> getNotOnTheWayDistance(Direction requestDirection) {
         return (elevator, floor) -> {
             if (elevator.isIdle() || this.isRequestOnTheWay(elevator, floor, requestDirection)) {
                 return Integer.MAX_VALUE;
             } else {
-                int distance = Math.abs(elevator.getLastStop() - floor);
-                int stops = elevator.getNumberOfStops();
+                int distanceOneWay = Math.abs(elevator.getLastStop() - elevator.getCurrentFloor());
+                int distanceSecondWay = Math.abs(elevator.getLastStop() - floor);
+                int stops = elevator.getNumberOfStopsBothWay(floor);
                 int totalStopTime = stops * TIME_TO_STOP_AT_FLOOR_AS_ITERATIONS;
-                return distance + totalStopTime;
+                return totalStopTime + distanceOneWay + distanceSecondWay;
             }
         };
     }
@@ -206,7 +215,7 @@ public class ElevatorSystem {
     private BiFunction<Elevator, Integer, Integer> getIdleAndOnTheWayDistance(Direction requestDirection) {
         return (elevator, floor) -> {
             int distance = Math.abs(elevator.getCurrentFloor() - floor);
-            int stops = elevator.getNumberOfStops();
+            int stops = elevator.getNumberOfStopsOneWay(floor);
             int totalStopTime = stops * TIME_TO_STOP_AT_FLOOR_AS_ITERATIONS;
 
             if (elevator.isIdle() || this.isRequestOnTheWay(elevator, floor, requestDirection)) {

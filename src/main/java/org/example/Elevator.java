@@ -3,6 +3,7 @@ package org.example;
 import java.util.Collections;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.stream.Stream;
 
 public class Elevator {
     private final int id;
@@ -81,13 +82,44 @@ public class Elevator {
         } else if (this.direction == Direction.DOWNWARD && !this.downwardRequests.isEmpty()) {
             return Collections.min(this.downwardRequests);
         } else {
-            return this.currentFloor;
+            return this.targetFloor;
         }
     }
 
-    public Integer getNumberOfStops() {
-        int penaltyForHavingTarget = (this.direction == Direction.NONE) ? 0 : 1;
-        return this.upwardRequests.size() + this.downwardRequests.size() + penaltyForHavingTarget;
+    public Integer getNumberOfStopsBothWay(int requestFloor) {
+        int penaltyForHavingTarget = this.isTargetFloorOnTheWay(requestFloor) ? 1 : 0;
+        int firstWayTotalStops, secondWayStops;
+
+        if (requestFloor > currentFloor) {
+            firstWayTotalStops = this.upwardRequests.size();
+            secondWayStops = (int) this.getRelevantDownwardRequests(requestFloor).count();
+        } else {
+            firstWayTotalStops = this.downwardRequests.size();
+            secondWayStops = (int) this.getRelevantUpwardRequests(requestFloor).count();
+        }
+
+        return firstWayTotalStops + secondWayStops + penaltyForHavingTarget;
+    }
+
+    public Integer getNumberOfStopsOneWay(int requestFloor) {
+        int penaltyForHavingTarget = this.isTargetFloorOnTheWay(requestFloor) ? 1 : 0;
+        Stream<Integer> relevantRequests;
+
+        if (requestFloor > currentFloor) {
+            relevantRequests = this.getRelevantUpwardRequests(requestFloor);
+        } else {
+            relevantRequests = this.getRelevantDownwardRequests(requestFloor);
+        }
+
+        return (int) relevantRequests.count() + penaltyForHavingTarget;
+    }
+
+    public boolean containsUpwardRequest(int floor) {
+        return this.upwardRequests.contains(floor);
+    }
+
+    public boolean containsDownwardRequest(int floor) {
+        return this.downwardRequests.contains(floor);
     }
 
     @Override
@@ -97,7 +129,30 @@ public class Elevator {
 
         return String.format(
             "Elevator %d - currently on floor %d going %s to floor %d. Up-Queue size %d. Down-Queue size %d.",
-            this.id + 1, this.currentFloor, this.direction.getName(), this.targetFloor, upQueueSize, downQueueSize
+            this.id, this.currentFloor, this.direction.getName(), this.targetFloor, upQueueSize, downQueueSize
         );
+    }
+
+    private Stream<Integer> getRelevantUpwardRequests(int requestFloor) {
+        Stream<Integer> relevantRequests;
+        relevantRequests = this.upwardRequests.stream().filter(floor -> floor > currentFloor && floor <= requestFloor);
+        return relevantRequests;
+    }
+
+
+    private Stream<Integer> getRelevantDownwardRequests(int requestFloor) {
+        Stream<Integer> relevantRequests;
+        relevantRequests = this.downwardRequests.stream().filter(floor -> floor < currentFloor && floor >= requestFloor);
+        return relevantRequests;
+    }
+
+    private boolean isTargetFloorOnTheWay(int requestFloor) {
+        if (this.direction == Direction.UPWARD) {
+            return this.getCurrentFloor() < this.targetFloor && this.targetFloor < requestFloor;
+        } else if (this.direction == Direction.DOWNWARD) {
+            return this.getCurrentFloor() > this.targetFloor && this.targetFloor > requestFloor;
+        } else  {
+            return false;
+        }
     }
 }

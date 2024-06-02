@@ -1,26 +1,34 @@
 package org.example;
 
 public class Main {
+
+    private static final int NUMBER_OF_ELEVATORS = 2;
+    private static final int NUMBER_OF_FLOORS = 11;
+
     public static void main(String[] args) {
-        ElevatorSystem es = new ElevatorSystem(2, 11);
+        // clickFloorButton - button inside the elevator (id)
+        // pickup - button on the floor to call elevator with direction
+        ElevatorSystem es = new ElevatorSystem(NUMBER_OF_ELEVATORS, NUMBER_OF_FLOORS);
 
-        es.pickup(6, Direction.UPWARD);
+        es.clickFloorButton(0, 5);
+        simulation(es, 3);
 
-        simulation(es, 5);
+        es.pickup(2, Direction.UPWARD);
+        es.pickup(10, Direction.DOWNWARD);
 
-        es.pickup(8, Direction.DOWNWARD);
-        es.pickup(4, Direction.UPWARD);
+        simulation(es, 1);
+
+        es.clickFloorButton(1, 8);
+        es.clickFloorButton(1, 5);
+
+        es.pickup(7, Direction.DOWNWARD);
 
         simulation(es, 3);
 
-        es.pickup(10, Direction.UPWARD);
-        es.pickup(1, Direction.DOWNWARD);
+        es.clickFloorButton(0, 2);
+        es.clickFloorButton(0, 0);
 
-        simulation(es, 3);
-
-        es.pickup(5, Direction.UPWARD);
-
-        simulation(es, 5);
+        simulation(es, 4);
     }
 
     private static void simulation(ElevatorSystem es, int steps) {

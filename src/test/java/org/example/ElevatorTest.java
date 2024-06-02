@@ -25,7 +25,7 @@ public class ElevatorTest {
         elevator.addRequest(7, Direction.UPWARD);
         elevator.addRequest(5, Direction.UPWARD);
         elevator.addRequest(3, Direction.UPWARD);
-        assertEquals(3, elevator.getNumberOfStops(), "Elevator should have 3 number od stops");
+        assertEquals(3, elevator.getNumberOfStopsOneWay(10), "Elevator should have 3 number od stops");
     }
 
     @Test
