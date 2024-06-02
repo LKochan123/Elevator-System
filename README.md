@@ -27,7 +27,10 @@ Pasażer w każdej chwili może nacisnąć przycisk w windzie. W sytuacji kiedy 
 Sklonuj zawartość repozytorium:
 
 1. Z IDE - uruchom plik main (możliwa symulacja według własnych potrzeb)
-2. Za pomocą pliku jar - ...
+2. Za pomocą pliku jar - przejdź do katalogu ./out/artifacts/Elevator_System_jar i uruchom komende:
+```bash
+java -jar Elevator-System.jar
+```
 
 ### Walidacja:
 - przyciski ze strzałką w górę i w dół na każdym piętrze
