@@ -9,8 +9,8 @@ public class Elevator {
     private int currentFloor;
     private int targetFloor;
     private Direction direction;
-    private final PriorityQueue<Integer> upwardRequests;
-    private final PriorityQueue<Integer> downwardRequests;
+    private final Queue<Integer> upwardRequests;
+    private final Queue<Integer> downwardRequests;
 
     public Elevator(int id) {
         this.id = id;
@@ -86,7 +86,8 @@ public class Elevator {
     }
 
     public Integer getNumberOfStops() {
-        return this.upwardRequests.size() + this.downwardRequests.size();
+        int penaltyForHavingTarget = (this.direction == Direction.NONE) ? 0 : 1;
+        return this.upwardRequests.size() + this.downwardRequests.size() + penaltyForHavingTarget;
     }
 
     @Override

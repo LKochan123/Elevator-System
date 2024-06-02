@@ -1,27 +1,41 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 
 public class ElevatorSystem {
     private final int numberOfFloors;
     private final List<Elevator> elevators;
+    private final Map<Integer, Map<Direction, Boolean>> floorRequests;
     private final int TIME_TO_STOP_AT_FLOOR_AS_ITERATIONS = 3;
 
     public ElevatorSystem(int numberOfElevators, int numberOfFloors) {
         this.numberOfFloors = numberOfFloors;
         this.elevators = new ArrayList<>();
+        this.floorRequests = new HashMap<>();
 
         for (int i = 0; i < numberOfElevators; i++) {
             this.elevators.add(new Elevator(i));
         }
+
+        for (int i = 0; i < numberOfFloors; i++) {
+            Map<Direction, Boolean> directions = new HashMap<>();
+            directions.put(Direction.UPWARD, false);
+            directions.put(Direction.DOWNWARD, false);
+            this.floorRequests.put(i, directions);
+        }
     }
 
     public void pickup(int requestFloor, Direction requestDirection) {
-        Elevator closestElevator = this.findOptimalElevator(requestFloor, requestDirection);
-        if (closestElevator != null) {
-            this.processElevatorAction(closestElevator, requestFloor);
+        if (!this.isRequestFloorUsed(requestFloor, requestDirection)) {
+            Elevator closestElevator = this.findOptimalElevator(requestFloor, requestDirection);
+            if (closestElevator != null) {
+                this.processElevatorAction(closestElevator, requestFloor);
+                this.setRequestFloor(requestFloor, requestDirection);
+            }
         }
     }
 
@@ -41,6 +55,25 @@ public class ElevatorSystem {
         return this.elevators;
     }
 
+    private boolean isRequestFloorUsed(int requestFloor, Direction requestDirection) {
+        Map<Direction, Boolean> requests = this.floorRequests.get(requestFloor);
+        return requests != null && requests.get(requestDirection);
+    }
+
+    private void setRequestFloor(int requestFloor, Direction requestDirection) {
+        Map<Direction, Boolean> requests = this.floorRequests.get(requestFloor);
+        if (requests != null && !requests.get(requestDirection)) {
+            requests.put(requestDirection, true);
+        }
+    }
+
+    private void clearRequestFloor(int floor, Direction direction) {
+        Map<Direction, Boolean> requests = this.floorRequests.get(floor);
+        if (requests != null && requests.get(direction)) {
+            requests.put(direction, false);
+        }
+    }
+
     private void update(int elevatorID, int currentFloor, int targetFloor) {
         Elevator elevator = this.elevators.get(elevatorID);
 
@@ -53,6 +86,9 @@ public class ElevatorSystem {
             } else {
                 elevator.setDirection(Direction.NONE);
             }
+
+            this.clearRequestFloor(currentFloor, Direction.UPWARD);
+            this.clearRequestFloor(currentFloor, Direction.DOWNWARD);
         }
     }
 
@@ -156,7 +192,7 @@ public class ElevatorSystem {
 
     private BiFunction<Elevator, Integer, Integer> getLastStopDistance(Direction requestDirection) {
         return (elevator, floor) -> {
-            if (elevator.isIdle() || isRequestOnTheWay(elevator, floor, requestDirection)) {
+            if (elevator.isIdle() || this.isRequestOnTheWay(elevator, floor, requestDirection)) {
                 return Integer.MAX_VALUE;
             } else {
                 int distance = Math.abs(elevator.getLastStop() - floor);
@@ -173,7 +209,7 @@ public class ElevatorSystem {
             int stops = elevator.getNumberOfStops();
             int totalStopTime = stops * TIME_TO_STOP_AT_FLOOR_AS_ITERATIONS;
 
-            if (elevator.isIdle() || isRequestOnTheWay(elevator, floor, requestDirection)) {
+            if (elevator.isIdle() || this.isRequestOnTheWay(elevator, floor, requestDirection)) {
                 return distance + totalStopTime;
             } else {
                 return Integer.MAX_VALUE;
