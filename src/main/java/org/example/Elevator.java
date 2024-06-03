@@ -54,11 +54,24 @@ public class Elevator {
         return this.direction == Direction.NONE;
     }
 
-    public void addRequest(int floor, Direction direction) {
-        boolean isUpward = direction == Direction.UPWARD;
-        Queue<Integer> requests = isUpward ? this.upwardRequests : this.downwardRequests;
+//    public void addRequest(int floor, Direction direction) {
+//        boolean isUpward = isDirectionUpward(direction);
+//        Queue<Integer> requests = isUpward ? this.upwardRequests : this.downwardRequests;
+//
+//        if ((isUpward && floor < this.targetFloor) || (!isUpward && floor > this.targetFloor)) {
+//            requests.add(this.targetFloor);
+//            this.targetFloor = floor;
+//        } else {
+//            requests.add(floor);
+//        }
+//    }
 
-        if ((isUpward && floor < this.targetFloor) || (!isUpward && floor > this.targetFloor)) {
+    public void addRequest(int floor, Direction direction, Direction requestDirection) {
+        boolean isUpward = isDirectionUpward(direction);
+        Queue<Integer> requests = isUpward ? this.upwardRequests : this.downwardRequests;
+        boolean directionMatch = requestDirection == null || isDirectionUpward(requestDirection) == isUpward;
+
+        if (directionMatch && ((isUpward && floor < this.targetFloor) || (!isUpward && floor > this.targetFloor))) {
             requests.add(this.targetFloor);
             this.targetFloor = floor;
         } else {
@@ -91,11 +104,11 @@ public class Elevator {
         int firstWayTotalStops, secondWayStops;
 
         if (requestFloor > currentFloor) {
-            firstWayTotalStops = this.upwardRequests.size();
-            secondWayStops = (int) this.getRelevantDownwardRequests(requestFloor).count();
-        } else {
             firstWayTotalStops = this.downwardRequests.size();
             secondWayStops = (int) this.getRelevantUpwardRequests(requestFloor).count();
+        } else {
+            firstWayTotalStops = this.upwardRequests.size();
+            secondWayStops = (int) this.getRelevantDownwardRequests(requestFloor).count();
         }
 
         return firstWayTotalStops + secondWayStops + penaltyForHavingTarget;
@@ -131,6 +144,10 @@ public class Elevator {
             "Elevator %d - currently on floor %d going %s to floor %d. Up-Queue size %d. Down-Queue size %d.",
             this.id, this.currentFloor, this.direction.getName(), this.targetFloor, upQueueSize, downQueueSize
         );
+    }
+
+    private boolean isDirectionUpward(Direction direction) {
+        return direction == Direction.UPWARD;
     }
 
     private Stream<Integer> getRelevantUpwardRequests(int requestFloor) {

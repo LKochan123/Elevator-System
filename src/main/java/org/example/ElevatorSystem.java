@@ -33,8 +33,9 @@ public class ElevatorSystem {
         if (!this.isRequestFloorUsed(requestFloor, requestDirection)) {
             Elevator closestElevator = this.findOptimalElevator(requestFloor, requestDirection);
             if (closestElevator != null) {
-                this.processElevatorAction(closestElevator, requestFloor);
+                this.processElevatorAction(closestElevator, requestFloor, requestDirection);
                 this.setRequestFloor(requestFloor, requestDirection);
+                System.out.printf("* Elevator pickup from floor %s with direction %s *\n", requestFloor, requestDirection);
             }
         }
     }
@@ -47,7 +48,8 @@ public class ElevatorSystem {
         } else if (elevator.getTargetFloor() == floor) {
             System.out.println("Elevator are currently going to this floor.");
         } else {
-            this.processElevatorAction(elevator, floor);
+            this.processElevatorAction(elevator, floor, null);
+            System.out.printf("* In elevator %s button with floor %s is clicked *\n", elevatorID, floor);
         }
     }
 
@@ -143,13 +145,16 @@ public class ElevatorSystem {
         return closestElevator;
     }
 
-    private void processElevatorAction(Elevator elevator, int requestFloor) {
-        Direction currentDirection = this.calcDirection(elevator.getCurrentFloor(), requestFloor);
+    private void processElevatorAction(Elevator elevator, int requestFloor, Direction requestDirection) {
+        Direction currentDirection;
+
         if (elevator.isIdle()) {
+            currentDirection = this.calcDirection(elevator.getCurrentFloor(), requestFloor);
             elevator.setTargetFloor(requestFloor);
             elevator.setDirection(currentDirection);
         } else {
-            elevator.addRequest(requestFloor, currentDirection);
+            currentDirection = (requestDirection != null) ? requestDirection : this.calcDirection(elevator.getCurrentFloor(), requestFloor);
+            elevator.addRequest(requestFloor, currentDirection, requestDirection);
         }
     }
 

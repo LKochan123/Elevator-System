@@ -22,32 +22,32 @@ public class ElevatorTest {
 
     @Test
     public void testGetNumberOfStops() {
-        elevator.addRequest(7, Direction.UPWARD);
-        elevator.addRequest(5, Direction.UPWARD);
-        elevator.addRequest(3, Direction.UPWARD);
+        elevator.addRequest(7, Direction.UPWARD, null);
+        elevator.addRequest(5, Direction.UPWARD, null);
+        elevator.addRequest(3, Direction.UPWARD, null);
         assertEquals(3, elevator.getNumberOfStopsOneWay(10), "Elevator should have 3 number od stops");
     }
 
     @Test
     public void testNextDestinationFloor() {
-        elevator.addRequest(3, Direction.UPWARD);
-        elevator.addRequest(5, Direction.UPWARD);
+        elevator.addRequest(3, Direction.UPWARD, null);
+        elevator.addRequest(5, Direction.UPWARD, null);
         assertEquals(Integer.valueOf(3), elevator.getNextDestinationFloor(), "Next destination should be 3");
         assertEquals(Integer.valueOf(5), elevator.getNextDestinationFloor(), "Next destination should be 5 after 3");
     }
 
     @Test
     public void testIsIdleAfterClearingRequests() {
-        elevator.addRequest(3, Direction.UPWARD);
+        elevator.addRequest(3, Direction.UPWARD, null);
         elevator.getNextDestinationFloor();
         assertTrue(elevator.isIdle(), "Elevator should be idle after processing all requests");
     }
 
     @Test
     public void testLastStop() {
-        elevator.addRequest(5, Direction.UPWARD);
-        elevator.addRequest(7, Direction.UPWARD);
-        elevator.addRequest(2, Direction.DOWNWARD);
+        elevator.addRequest(5, Direction.UPWARD, null);
+        elevator.addRequest(7, Direction.UPWARD, null);
+        elevator.addRequest(2, Direction.DOWNWARD, null);
         elevator.setDirection(Direction.UPWARD);
         assertEquals(Integer.valueOf(7), elevator.getLastStop(), "Last stop should be 7 in upward direction");
     }
