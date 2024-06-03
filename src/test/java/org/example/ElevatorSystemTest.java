@@ -64,6 +64,36 @@ public class ElevatorSystemTest {
         assertFalse(elevators.get(1).containsDownwardRequest(5));
     }
 
+    @Test
+    public void testFiveScenario() {
+        elevatorSystem.clickFloorButton(0, 4);
+        elevatorSystem.clickFloorButton(1, 5);
+        steps(4);
+        elevatorSystem.clickFloorButton(0, 0);
+        elevatorSystem.clickFloorButton(1, 0);
+        steps(1);
+        elevatorSystem.pickup(1, Direction.UPWARD);
+        List<Elevator> elevators = elevatorSystem.status();
+
+        assertEquals(0, elevators.get(0).getTargetFloor());
+        assertTrue(elevators.get(0).containsUpwardRequest(1));
+    }
+
+    @Test
+    public void testSixScenario() {
+        elevatorSystem.clickFloorButton(0, 5);
+        elevatorSystem.clickFloorButton(1, 6);
+        steps(4);
+        elevatorSystem.clickFloorButton(0, 1);
+        elevatorSystem.clickFloorButton(1, 1);
+        elevatorSystem.pickup(2, Direction.UPWARD);
+        steps(3);
+        List<Elevator> elevators = elevatorSystem.status();
+
+        assertEquals(2, elevators.get(0).getTargetFloor());
+        assertEquals(1, elevators.get(1).getTargetFloor());
+    }
+
     private void steps(int n) {
         for (int i = 0; i < n; i ++) {
             elevatorSystem.step();
