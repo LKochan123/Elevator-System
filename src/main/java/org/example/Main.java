@@ -6,9 +6,9 @@ public class Main {
     private static final int NUMBER_OF_FLOORS = 11;
 
     public static void main(String[] args) {
-        // clickFloorButton - button inside the elevator (id)
+        // clickFloorButton - button inside the elevator (id, floor)
         // pickup - button on the floor to call elevator with direction
-        // simulation - (steps) = number of iterations
+        // simulation - number of iterations (steps)
         ElevatorSystem es = new ElevatorSystem(NUMBER_OF_ELEVATORS, NUMBER_OF_FLOORS);
 
         es.clickFloorButton(0, 5);
