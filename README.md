@@ -2,7 +2,7 @@
 Symulator obsługi wind, który ma za zadanie przypominać jak najberdziej rzeczywisty problem.
 
 ### Założenia:
-Czas postoju windy na danym piętrze wynosi N = 3 (wartość ustalona przez użytkownika) iteracji tzn. jest to równe przejazdowi windy przez trzy kolejne piętra bez zatrzymania. Objaśniając, mamy 2 windy i znajdują się one w następującej sytuacji:
+Czas postoju windy na danym piętrze wynosi N = 3 (wartość ustalona przez użytkownika) iteracji tzn. jest to równe przejazdowi windy przez trzy kolejne piętra bez zatrzymywania. Objaśniając, mamy 2 windy i znajdują się one w następującej sytuacji:
 - Winda nr 1 -> aktualnie 1 piętro i stoi w miejscu
 - Winda nr 2 -> aktualnie 3 piętro i jedzie do góry na 5 piętro
 - Dostajemy wezwanie z 6 piętra do góry
@@ -12,13 +12,20 @@ Która winda zrealizuje to żądanie? Mogłoby się wydawać, że winda nr 2 pon
 - Winda nr 1 -> t = 5 pięć pięter do pokonania bez zatrzymania
 - Winda nr 2 -> t = 6 (3 + 3) trzy piętra do pokonania i trzy iteracje postoju
 
+W rzeczywistym problemie wołając winde nie określamy ile osób do niej będzie wsiadać, ani nie wiemy ile ludzi będzie już się w niej znajdować. W związku z tym program nie określa liczebności pasażerów itp. rzeczy ponieważ wydawało mi się to bezsensowne.
+
 ### Algorytm doboru windy:
 Dobór windy uwzględniając powyższe założenia działa w następujący sposób:
-1. Sprawdzamy czy istnieje winda bezczynna lub winda która dane żądanie będzie miałą po drodze, tzn. bez zmiany kierunku jazdy.
+1. Sprawdzamy czy istnieje winda bezczynna lub winda która dane żądanie będzie miałą po drodze, tzn. bez zmiany kierunku jazdy (uwzględniając kierunek zgłoszenia).
 2. Dopasowujemy windę, która zrealizuje to żądanie najszybciej zgodnie z założeniami (droga docelowa i postoje).
 3. Jeśli taka winda nie jest dostępna to szukamy windy, która najszybciej będzie dostępna (droga docelowa i postoje w 2 strony).
 
-W najgorszym przypadku (punkt nr 3) winda musi zmienić kierunek, czyli zrealizować wszystkie żądania w aktualnym kierunku jazdy i dopiero wtedy zawrócić.
+Przykład:
+- Winda znajduje się na piętrze nr. 10 i jedzie w dół na piętro 2.
+- Dostajemy zgłoszenie z piętra 6 w górę
+- Winda pominie piętro 6 i dopiero zatrzyma się na nim kiedy wykona wszystkie żądania w dół i zawróci w górę
+
+W takiej samej sytuacji, kiedy byłoby żądanie z piętra 6, ale w dół winda oczywiście zatrzymałaby się. Taka strategia wydaje mi się słuszna ponieważ przyciski ze strzałkami istnieją nie bez powodu na każdym z pięter :)
 
 ### Co w sytuacji kiedy windą jedzie więcej osób i mają różne piętra docelowe?
 Pasażer w każdej chwili może nacisnąć przycisk w windzie. W sytuacji kiedy piętra te są różne, algorytm najpierw zrealizuje te które są najbliżej zgodnie z aktualnym kierunkiem jazdy. Przykładowo winda znajduje się na piętrze 8 i jedzie w dół. Osoba nr 1 naciśnie piętro 3, a osoba nr 2 naciśnie piętro 10. W takiej sytuacji winda zrealizuje najpierw wszystkie żądania, które są po drodze jadąc na dół i dopiero wtedy kiedy się zakończą, winda zacznie jechać do góry.
