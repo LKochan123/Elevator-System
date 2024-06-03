@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Elevator-System:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Elevator_System_jar</output-path>
+    <root id="archive" name="Elevator-System.jar">
+      <element id="module-output" name="Elevator-System" />
+    </root>
+  </artifact>
+</component>
